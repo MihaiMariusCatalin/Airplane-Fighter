@@ -1,0 +1,8 @@
+body {
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;;
+    text-align: center;
+}
+
+#gameBoard {
+    background-color: black;
+}
