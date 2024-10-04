@@ -1,10 +1,12 @@
 const game = document.getElementById("gameBoard");
 const ctx = game.getContext("2d");
 const unitSize = 25;
-
 const backgroundColor = "black";
 const planeColor = "blue";
 const objColor = "white";
+const THOUSAND = 1000;
+const FRAME_TIME = THOUSAND / 60;
+const MAX_OBJECTS = 10;
 
 let plane = {
     x : (game.width - unitSize) / 2,
@@ -17,6 +19,13 @@ let objects = [];
 let seconds = 0;
 let gameOver = false;
 
+setInterval(increaseScore, THOUSAND);
+setInterval(gameLoop, FRAME_TIME);
+window.addEventListener("keydown", movePlane);
+window.onload = function () {
+    generateObjects();
+}
+
 function gameLoop() {
     if (gameOver) {
         document.getElementById("gameScore").innerText = seconds;
@@ -27,13 +36,6 @@ function gameLoop() {
     drawObj();
     updateObjects();
     checkCollision();
-}
-
-setInterval(increaseScore, 1000);
-setInterval(gameLoop, 1000/60);
-window.addEventListener("keydown", movePlane);
-window.onload = function () {
-    generateObjects();
 }
 
 function increaseScore() {
@@ -65,20 +67,24 @@ function movePlane(e) {
 }
 
 function generateObjects() {
-    for (let i = 0; i < 5; ++i) {
-        let obj = {
-            x : Math.floor(Math.random() * game.width + unitSize),
-            y : 0,
-            speed : Math.floor(Math.random() * 3 + 1),
-            height : unitSize,
-            width : unitSize
+    if (gameOver) {
+        return;
+    } else {    
+        for (let i = 0; i < MAX_OBJECTS; ++i) {
+            let obj = {
+                x : Math.floor(Math.random() * game.width + unitSize),
+                y : 0,
+                speed : Math.floor(Math.random() * 3 + 1),
+                height : unitSize,
+                width : unitSize
+            }
+            objects.push(obj);
         }
-        objects.push(obj);
     }
 }
 
 function updateObjects() {
-    for (let i = 0; i < 5; ++i) {
+    for (let i = 0; i < MAX_OBJECTS; ++i) {
         if (objects[i].y < game.height) {
             objects[i].y += objects[i].speed;
         } else {
@@ -95,7 +101,6 @@ function checkCollision() {
             obj.x + obj.width > plane.x &&
             obj.y < plane.y + plane.height &&
             obj.y + obj.height > plane.y) {
-            
             gameOver = true;
         }
     }
